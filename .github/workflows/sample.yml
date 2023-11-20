@@ -1,0 +1,58 @@
+name: "sample"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu' # 'corretto' は java-version 17 が使用できない
+          architecture: 'x86'
+      - id: get-latest-jar-link
+        name: get latest jar link from GitHub Packages
+        # *-sources.jar の URL は不要なため除外
+        # ex.) demo-batch-0.0.1-20231115.022451-1-sources.jar
+        run: |
+          LINK=$(gh api graphql \
+          -f packageType="MAVEN" \
+          -f owner=kiyota-tagbangers \
+          -f repo=demo-batch \
+          -f packageName="com.example.demo-batch" \
+          -f packageVersion=""0.0.1-SNAPSHOT"" \
+          -f query='
+          query ($packageType: PackageType!, $owner: String!, $repo: String!, $packageName: [String!], $packageVersion: String!) {
+            repository(owner: $owner, name: $repo) {
+              packages(first: 100, packageType: $packageType, names: $packageName) {
+                edges {
+                  node {
+                    version(version: $packageVersion) {
+                      files(last: 10) {
+                        nodes {
+                          name
+                          url
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }' \
+          --jq '.data.repository.packages.edges[].node.version.files.nodes[] | select(.name | endswith(".jar") and (. | test(".*-sources\\.jar") | not)) | .url')
+          echo "LINK=${LINK}" | tee $GITHUB_OUTPUT
+        env:
+           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN}}
+      - id: download-and-start-app
+        name: download jar and start app
+        run: |
+          curl -L "${{ steps.get-latest-jar-link.outputs.LINK }}" -o app.jar
+          ls -lh app.jar
+          java -jar app.jar
