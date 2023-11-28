@@ -1,11 +1,10 @@
 #!/bin/bash
 
 set -e
-now=$(date +'%Y-%m-%d-%H-%M-%S')
-
-touch ~/sample-after-install.txt
 
 if [ ! -d /appllication ]; then
-  echo "after install (scripts directory)  $now" >> /tmp/run.log
+  touch /tmp/after_install.log
+  now=$(date +'%Y-%m-%d-%H-%M-%S')
+  echo $now >> /tmp/after_install.log
   exit 0
 fi

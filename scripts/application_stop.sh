@@ -1,15 +1,13 @@
 #!/bin/bash
 
 set -e
-now=$(date +'%Y-%m-%d-%H-%M-%S')
 
-rm -f /tmp/run.log
-
-touch /tmp/run.log
-
-chmod 777 /tmp/run.log
 
 if [ ! -d /appllication ]; then
-  echo "application stop (scripts directory)  $now" >> /tmp/run.log
+  touch /tmp/application_stop.log
+  now=$(date +'%Y-%m-%d-%H-%M-%S')
+  echo $now >> /tmp/application_stop.log
+  chmod 777 /tmp/application_stop.log
   exit 0
 fi
+

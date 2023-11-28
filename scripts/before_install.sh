@@ -8,7 +8,8 @@ now=$(date +'%Y-%m-%d-%H-%M-%S')
 # touch ~/sample-before-install.txt
 
 if [ ! -d /appllication ]; then
-  echo "/appllication does not exist" >> /tmp/run.log
-  echo "before install (scripts directory)  $now" >> /tmp/run.log
+  touch /tmp/before_install.log
+  now=$(date +'%Y-%m-%d-%H-%M-%S')
+  echo $now >> /tmp/before_install.log
   exit 0
 fi
