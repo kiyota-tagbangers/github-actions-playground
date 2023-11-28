@@ -3,4 +3,6 @@
 set -e
 now=$(date +'%Y-%m-%d-%H-%M-%S')
 echo "application start (scripts directory)  $now" >> /tmp/run.log
+
+sudo su - batch-sample
 java -jar /var/run/app.jar
