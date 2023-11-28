@@ -68,7 +68,7 @@ resource "aws_iam_policy" "codedeploy_s3" {
   policy = data.aws_iam_policy_document.codedeploy_s3.json
 }
 
-# EC2 - Active 環境
+# EC2
 # https://registry.terraform.io/modules/terraform-aws-modules/ec2-instance/aws/latest
 # /var/run/sampleapp のディレクトリが存在する
 module "ec2" {
@@ -104,6 +104,9 @@ module "ec2" {
   yum install -y python3-pip
   pip3 install awscli
 
+  # user add
+  useradd batch-sample
+
   # setup codedeploy-agent
   yum install -y ruby
   curl https://aws-codedeploy-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/latest/install -O
@@ -125,12 +128,12 @@ module "ec2" {
   [Unit]
   Description=Sample Jar app
   After=syslog.target
-  
+
   [Service]
   User=root
   ExecStart=/bin/java -jar /var/run/sampleapp/app.jar
   SuccessExitStatus=143
-  
+
   [Install]
   WantedBy=multi-user.target
   EOF
