@@ -1,6 +1,6 @@
 #!/bin/bash
 
 set -e
-now=$(date +'%Y%m%d%H%M%S')
+now=$(date +'%Y-%m-%d-%H-%M-%S')
 echo "application start (scripts directory)  $now" > /tmp/run.log
-java -jar /var/run/demo-batch-0.0.1-SNAPSHOT.jar
+java -jar /var/run/app.jar
