@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
 jobs:
   sample:
     runs-on: ubuntu-latest
@@ -26,7 +29,7 @@ jobs:
           -f owner=kiyota-tagbangers \
           -f repo=demo-batch \
           -f packageName="com.example.demo-batch" \
-          -f packageVersion=""0.0.1-SNAPSHOT"" \
+          -f packageVersion="0.0.2" \
           -f query='
           query ($packageType: PackageType!, $owner: String!, $repo: String!, $packageName: [String!], $packageVersion: String!) {
             repository(owner: $owner, name: $repo) {
@@ -56,3 +59,23 @@ jobs:
           curl -L "${{ steps.get-latest-jar-link.outputs.LINK }}" -o app.jar
           ls -lh app.jar
           java -jar app.jar
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::449459699271:role/kiyota-codedeploy-test-gh-actions-java-cli-app
+          aws-region: "ap-northeast-1"
+      - name: Push a revision for CodeDeploy
+        run: |
+          aws deploy push \
+            --application-name kiyota-codedeploy-test \
+            --s3-location s3://kiyota-codedeploy-test-codedeploy-revision/demo-batch.zip \
+            --source . \
+            --description "from GitHub Actions"
+      - name: Deploy to Amazon EC2
+        run: |
+          aws deploy create-deployment \
+            --application-name kiyota-codedeploy-test \
+            --s3-location bucket=kiyota-codedeploy-test-codedeploy-revision,key=demo-batch.zip,bundleType=zip \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-group kiyota-codedeploy-test
