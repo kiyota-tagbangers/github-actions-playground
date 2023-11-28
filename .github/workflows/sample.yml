@@ -19,6 +19,11 @@ jobs:
           java-version: '17'
           distribution: 'zulu' # 'corretto' は java-version 17 が使用できない
           architecture: 'x86'
+      - id: check-application-version
+        name: check application version
+        run: |
+          VERSION=$(cat ./application-version.txt)
+          echo "VERSION=${VERSION}" | tee $GITHUB_OUTPUT
       - id: get-latest-jar-link
         name: get latest jar link from GitHub Packages
         # *-sources.jar の URL は不要なため除外
@@ -29,7 +34,7 @@ jobs:
           -f owner=kiyota-tagbangers \
           -f repo=demo-batch \
           -f packageName="com.example.demo-batch" \
-          -f packageVersion="0.0.2" \
+          -f packageVersion="${{ steps.check-application-version.outputs.VERSION }}" \
           -f query='
           query ($packageType: PackageType!, $owner: String!, $repo: String!, $packageName: [String!], $packageVersion: String!) {
             repository(owner: $owner, name: $repo) {
