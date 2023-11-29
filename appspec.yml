@@ -16,7 +16,7 @@ hooks:
   ApplicationStart:
     - location: scripts/application_start.sh
       timeout: 60
-#      runas: batch-sample
+      runas: batch-sample
   ApplicationStop:
     - location: scripts/application_stop.sh
       timeout: 60
