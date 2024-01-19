@@ -67,6 +67,9 @@ jobs:
           ls -lh app.jar
           java -jar app.jar
 
+      - name: Echo
+        run: echo "Hello, GitHub Actions!"
+
 #      - name: Configure AWS Credentials
 #        uses: aws-actions/configure-aws-credentials@v4
 #        with:
