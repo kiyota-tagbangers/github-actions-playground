@@ -12,6 +12,8 @@ permissions:
 jobs:
   sample:
     runs-on: ubuntu-latest
+    env:
+      TZ: 'Asia/Tokyo'
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v3
