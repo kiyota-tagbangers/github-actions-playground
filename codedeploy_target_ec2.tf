@@ -122,21 +122,22 @@ module "ec2" {
 
   # mk app dir
   mkdir -p /var/run/sampleapp
+  mkdir -p /var/run/sampleapp2
 
   # systemd configuration
-  cat << EOF > /etc/systemd/system/sampleapp.service
-  [Unit]
-  Description=Sample Jar app
-  After=syslog.target
+  # cat << EOF > /etc/systemd/system/sampleapp.service
+  # [Unit]
+  # Description=Sample Jar app
+  # After=syslog.target
 
-  [Service]
-  User=root
-  ExecStart=/bin/java -jar /var/run/sampleapp/app.jar
-  SuccessExitStatus=143
+  # [Service]
+  # User=root
+  # ExecStart=/bin/java -jar /var/run/sampleapp/app.jar
+  # SuccessExitStatus=143
 
-  [Install]
-  WantedBy=multi-user.target
-  EOF
+  # [Install]
+  # WantedBy=multi-user.target
+  # EOF
   USERDATA
 }
 #

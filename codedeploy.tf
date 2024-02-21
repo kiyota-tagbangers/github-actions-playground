@@ -50,3 +50,17 @@ resource "aws_codedeploy_deployment_group" "ec2" {
     value = local.name_tag
   }
 }
+
+resource "aws_codedeploy_deployment_group" "ec2-second" {
+  app_name               = aws_codedeploy_app.app.name
+  deployment_group_name  = "${local.name_tag}-second"
+  service_role_arn       = aws_iam_role.codedeploy_service_role.arn
+  deployment_config_name = "CodeDeployDefault.AllAtOnce"
+
+  # EC2 がマッチする条件を指定
+  ec2_tag_filter {
+    key   = "Name"
+    type  = "KEY_AND_VALUE"
+    value = local.name_tag
+  }
+}
