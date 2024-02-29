@@ -46,7 +46,7 @@ jobs:
                 edges {
                   node {
                     version(version: $packageVersion) {
-                      files(last: 10) {
+                      files(first: 10, orderBy: {field: CREATED_AT, direction: DESC} ) {
                         nodes {
                           name
                           url
@@ -58,7 +58,7 @@ jobs:
               }
             }
           }' \
-          --jq '.data.repository.packages.edges[].node.version.files.nodes[] | select(.name | endswith(".jar") and (. | test(".*-sources\\.jar") | not)) | .url')
+          --jq '[.data.repository.packages.edges[].node.version.files.nodes[] | select(.name | endswith(".jar") and (. | test(".*-sources\\.jar") | not))] | max_by(.updatedAt) | .url')
           echo "LINK=${LINK}" | tee $GITHUB_OUTPUT
         env:
            GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN}}
